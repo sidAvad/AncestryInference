@@ -1,2 +1,4 @@
 Data/
 Results/
+__pycache__/
+Session.vim

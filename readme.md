@@ -14,13 +14,13 @@ NOTE : All files are copied into the Data/ directory. Data/unzipped contains unz
 
 ## SHELL SCRIPTS:
 --------------
-`01_beagle2vcf.sh`:
+`beagle2vcf.sh`:
 Shell script to convert beagle-phased trio files into vcf formatted files, and split them into parent data only.
 
 NOTE : DEPRECATED , we now have the phased vcf data separated into parents and children from Sushila.
 
-`02_simulate-admix-pedigree.sh`:
-1. ped-sim doesn't allow for choosing founder individuals. Since we need A-B A-B admixture, we need to run ped-sim multiple times with input vcfs that contain only 2 individuals.
+`simulate-admix-pedigree.sh`:
+1. ped-sim doesnt allow for choosing founder individuals. Since we need A-B A-B admixture, we need to run ped-sim multiple times with input vcfs that contain only 2 individuals.
 2. This script automates this process so that we can do mulitple simulations.
 3. Can work with AB/CD admixture.
 4. Contains Python script that generates A/B C/D founder population, which then sends it through the appropriate number of ped-sim calls to finally generate a simulated individuals. 
@@ -28,25 +28,25 @@ NOTE : DEPRECATED , we now have the phased vcf data separated into parents and c
  
 NOTE : Looks like this is not needed as well. Amy implemented a new option in ped-sim. 
 
-`02_select-admixture.py`
+`select-admixture.py`
 
 1. This is a script that prints a list of ids from the A and B populations input by the user. 
 2. Prints to stdout which is used by `02_pickcols.awk` to subsample the input vcf. 
 3. TODO:popfile and vcfFile read in form sys.argv so they can be passed as arguments. ( hopefully named arguments ) 
  
-`02_prune-admixture.py`
+`prune-admixture.py`
 1. Python script to select ped-sim simulations that are AB/AB admixture. Outpus a series of ped-sim ids to retain. 
 2. Arguments : .ids file from ped-sim. 
 3. Deprecated : Retains only founders and not entire pedigree. `03_prune-admixture.py` is current.
 
-`02_pickcols.awk`
+`pickcols.awk`
 awk script that takes in two files, first one contains field names to pick as a list, second one is a vcf file to pick columns from
 
-`03_prune-admixture.py`
+`prune-admixture.py`
 
 Updated prune-admixture script that now outputs all ped-sim ids to be retained ( based on founders that have ABAB admixture ) 
 
-`03_simulate-admix-pedigree.sh`
+`simulate-admix-pedigree.sh`
 
 Mostly the same. Just uses `03_prine-admixture.py` and output file names are improved
 

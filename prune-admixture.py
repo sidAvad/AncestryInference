@@ -3,7 +3,6 @@ import math
 import sys
 
 #~~~~~~~~~~~~~#
-
 def pruneOutput(pedsim_output,popfile, pedsim_idfile):
     #Function that takes the output vcf from pedsim, a lookup file for source populations and the id file from pedsim
     #to identify individuals in output vcf on input basis. 
@@ -37,38 +36,19 @@ def pruneOutput(pedsim_output,popfile, pedsim_idfile):
             simids = subset.simids.tolist()
             blockel = [x[:(x.find('_')+1)] for x in simids][0] 
             pruned_founders.append(blockel) #print everything before the underscore including the underscore
+    
     #Select elements from header list if the founder portion of ped-sim id matches the pruned_founders             
-    pruned_all = [x for x in headerlist if x[:(x.find('_')+1)] in pruned_founders]\
-    return([pruned_founders,pruned_all])
+    pruned_all = [x for x in headerlist if x[:(x.find('_')+1)] in pruned_founders]
+    return pruned_founders, pruned_all
 #~~~~~~~#
 
-
-def getHoldoutIds(pruned_founders,pedsim_idfile,popfile,vcfFile):
-    #using list of pruned founders (those that satisfy ABAB) 
-    #we return an equally sized hold out set of As and Bs that are not 
-    #founders from the input vcf.
-     
-    nSamp = len(pruned_founders)  
-    popDF = pd.read_table(popfile)
-    idDF = pd.read_table(pedsim_idfile,header=None,names=['simids','popids'])
-    mergedDF = pd.merge(idDF,popDF,left_on = 'popids', right_on='IID')\
-    
-    #Read in the header line of the vcf file that we need to sample from  
-    with open(vcfFile) as fl:
-        for i,line in enumerate(fl):
-            if line.startswith("#CHR"):
-                header =  line
-                break
-    
-    print(header) 
-    return(holdout_founders)
-
-
-
-popfile= "~/siddharth/A/Data/relationships_w_pops_121708.txt"
+#Filenames
+popfile= "~/siddharth/AncestryInference/Data/relationships_w_pops_121708.txt"
 pedsim_idfile = "~/siddharth/AncestryInference/Results/admix60/admix60-output.ids"
-pedsim_output = "/home/sna53/siddharth/AncestryInference/admix60.vcf"
+pedsim_output = "/home/sna53/siddharth/AncestryInference/Results/admix60/admix60-output.vcf"
 
-founders = pruneOutput(pedsim_output, popfile, pedsim_idfile)[1]
-print(testlist)
+#Grab the results we need and pretty print
+founders = pruneOutput(pedsim_output, popfile, pedsim_idfile)[0]
+print(*founders, sep='\n'  )
+
 

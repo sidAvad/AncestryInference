@@ -1,9 +1,8 @@
+import pandas as pd 
+import math
+import sys
+
+pedsimIDFILE = "~/siddharth/AncestryInference/Results/admix60/admix60-output.ids"
+idDF = pd.read_table(pedsimIDFILE,header=None,names=['simids','popids'])
 
 
-print('testing macro2.0 ...')
-print('okay this is pretty damn neat' )
-
-print('testing macro2.0 ...')
-print('okay this is pretty damn neat' )
-
-print('appending this stuff works too') 
