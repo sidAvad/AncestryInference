@@ -2,3 +2,6 @@ Data/
 Results/
 __pycache__/
 Session.vim
+Output/
+scratch.py
+scratch.sh

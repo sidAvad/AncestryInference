@@ -1,22 +1,20 @@
 #!/bin/bash
-
-# To allow process substitution to work we need to disable posix mode
+Data=/home/sna53/siddharth/Data-Large/AncestryInference/unzipped/
+#Disable posix mode to allow process substitution to work 
 set +o posix  
 
-# This part of the script picks the ASW and CEU population columns from the 'all' vcf file. 
-sh pickcols.awk <(python 02_select-admixture.py "ASW" "CEU" | awk '{print $2; end}' | sed '$d' - ) <( tail -n +6 /home/sna53/siddharth/Data-Large/AncestryInference/unzipped/hapmap3_r2_b37_fwd_phased.all.vcf ) | tr ' ' \\t > admix60-input.vcf 
+# Pick the CEU and YRI population columns from the 'parents' (TODO:also need to do this with children ) vcf file. 
+sh pickcols.awk <(python select-admixture.py "CEU" "YRI" | awk '{print $2; end}' | sed '$d' - ) <( tail -n +6 ${Data}/hapmap3_r2_b37_fwd_phased.trio-parents.recode.vcf) | tr ' ' \\t > admix-YRI\|CEU-input.vcf 
 
 MAP=/fs/cbsubscb09/storage/resources/genetic_maps/refined_mf.simmap #mapfile for ped-sim run 
 
-# TODO: Create def file: here you can modify the number of simulations 
+# TODO: Create def file: to modify the number of simulations directly from this script
 # Run ped-sim
-/home/sna53/siddharth/ped-sim/ped-sim -d admix60-deffile.txt -m $MAP -i admix60-input.vcf -o admix60-output --founder_ids 
+/home/sna53/siddharth/ped-sim/ped-sim -d admix-YRI\|CEU-deffile.txt -m $MAP -i admix-YRI\|CEU-input.vcf -o admix-YRI\|CEU-output --founder_ids 
 
 
-# Pick ids from ped-sim 'outid' vcf file that correspond to ABAB founders and write to `outid_pruned` vcf file.
-sh pickcols.awk <(python 03_prune-admixture.py admix60-output.ids) <(cat admix60-output.vcf) | tr ' ' \\t > admix60-output_pruned.vcf
+# Prune out identical founders from ped-sim output and write to _pruned.vcf file 
+sh pickcols.awk <(python prune-admixture.py admix-YRI\|CEU-output.ids) <(cat admix-YRI\|CEU-output.vcf) | tr ' ' \\t > admix-YRI\|CEU-output_pruned.vcf
 
-# NOTE : check output by running 04_print-ids\&pops.py on the simid-outid.ids file ( e.g admix60-output.ids) and comparing it with the 
+# NOTE : check output by running print-ids\&pops.py on the simid-outid.ids file ( e.g admix-YRI\|CEU-output.ids) and comparing it with the 
 # header of the corresonding _pruned vcf file.  
-
-

@@ -14,14 +14,14 @@ def pruneOutput(pedsim_output,popfile, pedsim_idfile):
 
     #Iterate over mergedDf in blocks ( corresponding to simulation number ) and 
     #print only those ped sim ids where the founders are AB/AB admixed. Blocks are of size four = number of founders.
-    mergedDF = mergedDF[['simids','popids','population']]\
+    mergedDF = mergedDF[['simids','popids','population']]
 
     #Read in the header from the pedsim outputfile and store the values as a list
     h = pd.read_table(pedsim_output,nrows =1 , sep = '\t')
-    headerlist = list(h.columns.values)\
+    headerlist = list(h.columns.values)
     
     
-    #Loop over founders forom the ids file as blocks of 4 and append the ids if ABAB holds.  
+    #Loop over founders forom the ids file as blocks of 4 and append the ids if not AAAA or not BBBB holds.  
     blocks = math.ceil(float(len(mergedDF)/4))
     pruned_founders = []
     for block in range(1,blocks):\
@@ -32,7 +32,7 @@ def pruneOutput(pedsim_output,popfile, pedsim_idfile):
         subset = mergedDF[start:(end+1)]\
         
         l = list(subset.population)
-        if not(l[0]==l[1] or  l[2]==l[3]):
+        if not (l.count(l[0])==len(l)):
             simids = subset.simids.tolist()
             blockel = [x[:(x.find('_')+1)] for x in simids][0] 
             pruned_founders.append(blockel) #print everything before the underscore including the underscore
@@ -44,11 +44,13 @@ def pruneOutput(pedsim_output,popfile, pedsim_idfile):
 
 #Filenames
 popfile= "~/siddharth/AncestryInference/Data/relationships_w_pops_121708.txt"
-pedsim_idfile = "~/siddharth/AncestryInference/Results/admix60/admix60-output.ids"
-pedsim_output = "/home/sna53/siddharth/AncestryInference/Results/admix60/admix60-output.vcf"
+pedsim_idfile = sys.argv[1]
+print(pedsim_idfile)
+pedsim_output = "/home/sna53/siddharth/AncestryInference/admix-YRI|CEU-output.vcf"
+
 
 #Grab the results we need and pretty print
-founders = pruneOutput(pedsim_output, popfile, pedsim_idfile)[0]
-print(*founders, sep='\n'  )
+founders = pruneOutput(pedsim_output, popfile, pedsim_idfile)[1]
+print(*founders, sep ='\n')
 
 
