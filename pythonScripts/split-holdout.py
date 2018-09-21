@@ -5,7 +5,7 @@ import sys
 
 #FILENAMES
 popfile = "/home/sna53/siddharth/AncestryInference/Data/relationships_w_pops_121708.txt"
-idfile = "/home/sna53/siddharth/AncestryInference/Output/admixYC/admix-YRI|CEU-output.ids"
+idfile = "/home/sna53/siddharth/AncestryInference/Output/admixYC/pedsimOutput/admix-YRI|CEU-output.ids"
 vcfFile = sys.argv[1] 
 
 #Files to Dataframes 
